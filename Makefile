@@ -10,10 +10,10 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME		:= getnextline.a
+NAME		:= libgetnextline.a
 
 CC			:= cc
-CFLAGS		:= -Wall -Wextra -Werror
+CFLAGS		:= -Wall -Wextra -Werror -g
 AR			:= ar
 ARFLAGS		:= rcs
 RM			:= rm -f
@@ -43,5 +43,8 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+test: $(NAME) test/main.c
+	$(CC) $(CFLAGS) test/main.c -I$(INCDIR) -L. -lgetnextline -o test_gnl && ./test_gnl
 
+
+.PHONY: all clean fclean re test

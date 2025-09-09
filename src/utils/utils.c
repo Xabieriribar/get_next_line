@@ -61,7 +61,7 @@ int	ft_list_len(t_list *list)
 	int	i;
 
 	if (list == NULL)
-		return (NULL);
+		return (0);
 	while (list)
 	{
 		i = 0;
@@ -87,18 +87,6 @@ t_list	*ft_lstlast(t_list *lst)
 	while (lst->next)
 		lst = lst->next;
 	return (lst);
-}
-
-t_list	*ft_lstnew(void *content)
-{
-	t_list	*node;
-
-	node = malloc(sizeof(*node));
-	if (!node)
-		return (NULL);
-	node->content = content;
-	node->next = NULL;
-	return (node);
 }
 
 void	append(t_list **list, char *bffr)
@@ -163,7 +151,7 @@ void	ft_lstdelone(t_list *lst, void (*del)(void *))
 {
 	if (!lst || !del)
 		return ;
-	del(lst -> content);
+	del(lst -> buffer);
 	free(lst);
 }
 
