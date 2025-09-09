@@ -19,5 +19,10 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE < 0)
 		return (NULL);
-	create_list(&list, fd);
+	ft_create_list(&list, fd);
+	if (list == NULL)
+		return (NULL);
+	next_line = ft_get_line(list);
+	ft_clean_list(&list);
+	return (next_line);
 }

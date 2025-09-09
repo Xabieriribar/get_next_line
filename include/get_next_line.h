@@ -13,6 +13,8 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
+#include <stdlib.h>
+#include <stdio.h>
 # define BUFFER_SIZE 4096
 
 typedef struct s_list
@@ -22,5 +24,7 @@ typedef struct s_list
 }	t_list;
 
 char	*get_next_line(int fd);
+
+void	ft_create_list(t_list **list, int fd);
 
 #endif
