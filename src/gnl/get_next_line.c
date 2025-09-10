@@ -1,0 +1,92 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
+/*   Updated: 2025/09/10 09:35:26 by xiribar          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "get_next_line.h"
+
+void	ft_clean_list(t_list **lst)
+{
+	t_list	*next_node;
+	t_list	*last_node;
+	int		i;
+	int		k;
+	char	*buffer;
+
+	i = 0;
+	k = 0;
+	if (!lst || !*lst)
+		return ;
+	last_node = ft_lstlast(*lst);
+	next_node = malloc(sizeof(t_list));
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!next_node || !buffer)
+		return ;
+	while (last_node->buffer[i] && last_node->buffer[i] != '\n')
+		i++;
+	while (last_node->buffer[i])
+		buffer[k++] = last_node->buffer[i++];
+	buffer[k] = '\0';
+	next_node->buffer = buffer;
+	next_node->next = NULL;
+	deallocate(lst, next_node, buffer);
+}
+
+char	*ft_get_line(t_list *lst)
+{
+	int		len_to_newline;
+	char	*next_line;
+
+	len_to_newline = ft_list_len(lst);
+	if (lst == NULL)
+		return (NULL);
+	next_line = malloc(len_to_newline + 1);
+	if (!next_line)
+		return (NULL);
+	next_line = ft_feed_buffer(lst, next_line);
+	return (next_line);
+}
+
+void	ft_create_list(t_list **list, int fd)
+{
+	int		chars_read;
+	char	*bffr;
+
+	while (!found_newline(*list))
+	{
+		bffr = malloc(BUFFER_SIZE + 1);
+		if (!bffr)
+			return ;
+		chars_read = read(fd, bffr, BUFFER_SIZE);
+		if (chars_read <= 0)
+		{
+			free(bffr);
+			return ;
+		}
+		bffr[chars_read] = '\0';
+		append(list, bffr);
+	}
+}
+
+char	*get_next_line(int fd)
+{
+	t_list	*list;
+	char	*next_line;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	list = NULL;
+	ft_create_list(&list, fd);
+	if (list == NULL)
+		return (NULL);
+	next_line = ft_get_line(list);
+	ft_clean_list(&list);
+	return (next_line);
+}

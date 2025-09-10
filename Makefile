@@ -22,8 +22,9 @@ INCDIR		:= include
 SRCDIR		:= src
 
 SRC_MAIN	:= \
-	$(SRCDIR)/get_next_line/get_next_line.c \
-	$(SRCDIR)/utils/utils.c
+	$(SRCDIR)/gnl/get_next_line.c \
+	$(SRCDIR)/utils/utils.c \
+	$(SRCDIR)/utils/list_utils.c \
 
 OBJ			:= $(SRC_MAIN:.c=.o)
 
@@ -35,18 +36,17 @@ $(NAME): $(OBJ)
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
 
+test: $(NAME) test/main.c
+	$(CC) $(CFLAGS) test/main.c -L. -I$(INCDIR) -lgetnextline -o test/test_exec
+
 clean:
 	$(RM) $(OBJ)
 
 fclean: clean
 	$(RM) $(NAME)
 
-test: $(NAME) test/main.c
-	$(CC) $(CFLAGS) test/main.c -L. -I$(INCDIR) -lgetnextline -o test/test_exec
-
 run_test: test
 	./test/test_exec
-
 
 re: fclean all
 

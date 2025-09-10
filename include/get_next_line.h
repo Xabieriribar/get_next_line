@@ -13,12 +13,14 @@
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-#include <stdlib.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
+# include <stdlib.h>
+# include <fcntl.h>
+# include <stdio.h>
+# include <unistd.h>
 
-# define BUFFER_SIZE 4096
+# ifndef BUFFER_SIZE
+#define BUFFER_SIZE 4096
+# endif
 
 typedef struct s_list
 {
@@ -28,8 +30,13 @@ typedef struct s_list
 
 char	*get_next_line(int fd);
 
-void	ft_create_list(t_list **list, int fd);
-char	*ft_get_line(t_list *lst);
-void	ft_clean_list(t_list **lst);
+int		found_newline(t_list *lst);
+void	append(t_list **list, char *bffr);
+t_list	*ft_lstlast(t_list *lst);
+int		ft_list_len(t_list *list);
+char	*ft_feed_buffer(t_list *lst, char *bffr_to_feed);
+void	deallocate(t_list **lst, t_list *next_node, char *buffer);
+void	ft_lstclear(t_list **lst, void (*del)(void *));
+void	del(void *content);
 
 #endif

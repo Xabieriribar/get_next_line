@@ -6,7 +6,7 @@
 /*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
-/*   Updated: 2025/09/10 09:04:38 by xiribar          ###   ########.fr       */
+/*   Updated: 2025/09/10 09:34:37 by xiribar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,30 @@ int	found_newline(t_list *lst)
 	return (0);
 }
 
+void	append(t_list **list, char *bffr)
+{
+	t_list	*last_node;
+	t_list	*new_node;
+
+	last_node = ft_lstlast(*list);
+	new_node = malloc(sizeof(t_list));
+	if (!new_node)
+		return ;
+	if (last_node == NULL)
+		*list = new_node;
+	else
+		last_node -> next = new_node;
+	new_node -> buffer = bffr;
+	new_node -> next = NULL;
+}
+
 char	*ft_feed_buffer(t_list *lst, char *bffr_to_feed)
 {
 	int	i;
 	int	k;
 
 	if (lst == NULL || bffr_to_feed == NULL)
-        return (NULL);
+		return (NULL);
 	k = 0;
 	while (lst)
 	{
@@ -57,124 +74,6 @@ char	*ft_feed_buffer(t_list *lst, char *bffr_to_feed)
 	return (bffr_to_feed);
 }
 
-int	ft_list_len(t_list *list)
-{
-	int	len;
-	int	i;
-
-	if (list == NULL)
-		return (0);
-	len = 0;
-	while (list)
-	{
-		i = 0;
-		while (list->buffer[i])
-		{
-			if (list->buffer[i] == '\n')
-			{
-				len++;
-				return (len);
-			}
-			i++;
-			len++;
-		}
-		list = list->next;
-	}
-	return (len);
-}
-
-t_list	*ft_lstlast(t_list *lst)
-{
-	if (!lst)
-		return (NULL);
-	while (lst->next)
-		lst = lst->next;
-	return (lst);
-}
-
-void	append(t_list **list, char *bffr)
-{
-	t_list	*last_node;
-	t_list	*new_node;
-
-	last_node =	ft_lstlast(*list);
-	new_node =	malloc(sizeof(t_list));
-	if (!new_node)
-		return ;
-	if (last_node == NULL)
-		*list = new_node;
-	else
-		last_node -> next = new_node;
-	new_node -> buffer = bffr;
-	new_node -> next = NULL;
-}
-
-void	ft_create_list(t_list **list, int fd)
-{
-    int		chars_read;
-    char	*bffr;
-
-    while (!found_newline(*list))
-    {
-        bffr = malloc(BUFFER_SIZE + 1);
-        if (!bffr)
-            return ;
-        chars_read = read(fd, bffr, BUFFER_SIZE);
-        if (chars_read <= 0)
-        {
-            free(bffr);
-            return ;
-        }
-        bffr[chars_read] = '\0';
-        append(list, bffr);
-    }
-}
-
-char	*ft_get_line(t_list *lst)
-{
-	int		len_to_newline;
-	char	*next_line;
-
-	len_to_newline = ft_list_len(lst);
-	if (lst == NULL)
-        return (NULL);
-	next_line = malloc(len_to_newline + 1);
-	if (!next_line)
-		return (NULL);
-	next_line = ft_feed_buffer(lst, next_line);
-	return (next_line);
-}
-
-void	del(void *content)
-{
-	free(content);
-}
-
-void	ft_lstdelone(t_list *lst, void (*del)(void *))
-{
-	if (!lst || !del)
-		return ;
-	del(lst -> buffer);
-	free(lst);
-}
-
-void	ft_lstclear(t_list **lst, void (*del)(void *))
-{
-	t_list	*temp;
-	t_list	*temp1;
-
-	if (!lst || !del)
-		return ;
-	temp = *lst;
-	while (temp != NULL)
-	{
-		temp1 = temp->next;
-		ft_lstdelone(temp, del);
-		temp = temp1;
-	}
-	*lst = NULL;
-}
-
 void	deallocate(t_list **lst, t_list *next_node, char *buffer)
 {
 	ft_lstclear(lst, del);
@@ -187,31 +86,4 @@ void	deallocate(t_list **lst, t_list *next_node, char *buffer)
 		free(buffer);
 		free(next_node);
 	}
-}
-
-void	ft_clean_list(t_list **lst)
-{
-	t_list	*next_node;
-	t_list	*last_node;
-	int		i;
-	int		k;
-	char	*buffer;
-
-	i = 0;
-	k = 0;
-	if (!lst || !*lst)
-		return ;
-	last_node = ft_lstlast(*lst);
-	next_node = malloc(sizeof(t_list));
-	buffer = malloc(BUFFER_SIZE + 1);
-	if (!next_node || !buffer)
-		return ;
-	while (last_node->buffer[i] && last_node->buffer[i] != '\n')
-		i++;
-	while (last_node->buffer[i])
-		buffer[k++] = last_node->buffer[i++];
-	buffer[k] = '\0';
-	next_node->buffer = buffer;
-	next_node->next = NULL;
-	deallocate(lst, next_node, buffer);
 }
