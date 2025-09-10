@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: xiribar <xiribar@student.42lausanne.ch>    +#+  +:+       +#+        */
+/*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
-/*   Updated: 2025/09/04 00:00:00 by xirib            ###   ########.fr       */
+/*   Updated: 2025/09/10 09:04:38 by xiribar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ int	found_newline(t_list *lst)
 	int	i;
 
 	i = 0;
-	while(lst)
+	while (lst)
 	{
 		i = 0;
 		while (lst -> buffer[i])
@@ -35,8 +35,10 @@ char	*ft_feed_buffer(t_list *lst, char *bffr_to_feed)
 {
 	int	i;
 	int	k;
-	if (lst == NULL)
-		return (NULL);
+
+	if (lst == NULL || bffr_to_feed == NULL)
+        return (NULL);
+	k = 0;
 	while (lst)
 	{
 		i = 0;
@@ -62,6 +64,7 @@ int	ft_list_len(t_list *list)
 
 	if (list == NULL)
 		return (0);
+	len = 0;
 	while (list)
 	{
 		i = 0;
@@ -99,9 +102,7 @@ void	append(t_list **list, char *bffr)
 	if (!new_node)
 		return ;
 	if (last_node == NULL)
-	{
 		*list = new_node;
-	}
 	else
 		last_node -> next = new_node;
 	new_node -> buffer = bffr;
@@ -110,23 +111,23 @@ void	append(t_list **list, char *bffr)
 
 void	ft_create_list(t_list **list, int fd)
 {
-	int		chars_read;
-	char	*bffr;
+    int		chars_read;
+    char	*bffr;
 
-	while (!found_newline(*list))
-	{
-		bffr = malloc(BUFFER_SIZE + 1);
-		if (!bffr)
-			return ;
-		chars_read = read(fd, bffr, BUFFER_SIZE);
-		if (!chars_read)
-		{
-			free(bffr);
-			return ;
-		}
-		bffr[chars_read] = '\0';
-		append(list, bffr);
-	}
+    while (!found_newline(*list))
+    {
+        bffr = malloc(BUFFER_SIZE + 1);
+        if (!bffr)
+            return ;
+        chars_read = read(fd, bffr, BUFFER_SIZE);
+        if (chars_read <= 0)
+        {
+            free(bffr);
+            return ;
+        }
+        bffr[chars_read] = '\0';
+        append(list, bffr);
+    }
 }
 
 char	*ft_get_line(t_list *lst)
@@ -136,8 +137,10 @@ char	*ft_get_line(t_list *lst)
 
 	len_to_newline = ft_list_len(lst);
 	if (lst == NULL)
-		return (NULL);
+        return (NULL);
 	next_line = malloc(len_to_newline + 1);
+	if (!next_line)
+		return (NULL);
 	next_line = ft_feed_buffer(lst, next_line);
 	return (next_line);
 }
@@ -175,7 +178,7 @@ void	ft_lstclear(t_list **lst, void (*del)(void *))
 void	deallocate(t_list **lst, t_list *next_node, char *buffer)
 {
 	ft_lstclear(lst, del);
-	if (next_node -> buffer[0])
+	if (next_node -> buffer)
 	{
 		*lst = next_node;
 	}
@@ -196,14 +199,19 @@ void	ft_clean_list(t_list **lst)
 
 	i = 0;
 	k = 0;
+	if (!lst || !*lst)
+		return ;
 	last_node = ft_lstlast(*lst);
 	next_node = malloc(sizeof(t_list));
 	buffer = malloc(BUFFER_SIZE + 1);
-	if (!next_node)
+	if (!next_node || !buffer)
 		return ;
-	while (last_node->buffer[i] != '\0' && last_node->buffer[i] != '\n')
-		++i;
-	while (last_node->buffer[i] != '\0' && last_node->buffer[++i])
-		buffer[k++] = last_node->buffer[i];
+	while (last_node->buffer[i] && last_node->buffer[i] != '\n')
+		i++;
+	while (last_node->buffer[i])
+		buffer[k++] = last_node->buffer[i++];
+	buffer[k] = '\0';
+	next_node->buffer = buffer;
+	next_node->next = NULL;
 	deallocate(lst, next_node, buffer);
 }

@@ -9,6 +9,8 @@ int	main(void)
 	list = 0;
 	fd = open("test/text.txt", O_RDONLY);
 	while ((next_line = get_next_line(fd)))
+	 {
 		printf("%d -> %s", list++, next_line);
+	 }
 	return (0);
 }

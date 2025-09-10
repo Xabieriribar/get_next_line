@@ -17,8 +17,9 @@ char	*get_next_line(int fd)
 	t_list	*list;
 	char	*next_line;
 
-	if (fd < 0 || BUFFER_SIZE < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
+	list = NULL;
 	ft_create_list(&list, fd);
 	if (list == NULL)
 		return (NULL);

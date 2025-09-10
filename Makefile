@@ -41,10 +41,13 @@ clean:
 fclean: clean
 	$(RM) $(NAME)
 
-re: fclean all
-
 test: $(NAME) test/main.c
-	$(CC) $(CFLAGS) test/main.c -I$(INCDIR) -L. -lgetnextline -o test_gnl && ./test_gnl
+	$(CC) $(CFLAGS) test/main.c -L. -I$(INCDIR) -lgetnextline -o test/test_exec
 
+run_test: test
+	./test/test_exec
+
+
+re: fclean all
 
 .PHONY: all clean fclean re test
