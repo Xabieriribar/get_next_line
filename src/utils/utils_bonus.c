@@ -6,7 +6,7 @@
 /*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
-/*   Updated: 2025/09/11 09:30:09 by xiribar          ###   ########.fr       */
+/*   Updated: 2025/09/11 09:55:03 by xiribar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,7 @@ char	*ft_feed_buffer(t_list *lst, char *bffr_to_feed)
 		}
 		lst = lst->next;
 	}
-	bffr_to_feed[k++] = '\n';
-	bffr_to_feed[k] = '\0';
+	bffr_to_feed[k++] = '\0';
 	return (bffr_to_feed);
 }
 

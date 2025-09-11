@@ -26,7 +26,14 @@ SRC_MAIN	:= \
 	$(SRCDIR)/utils/utils.c \
 	$(SRCDIR)/utils/list_utils.c \
 
+SRC_BONUS	:= \
+	$(SRCDIR)/gnl/get_next_line_bonus.c \
+	$(SRCIDR)/utils/utils_bonus.c \
+	$(SRCIDR)/utils/list_utils.c \
+
 OBJ			:= $(SRC_MAIN:.c=.o)
+
+OBJ_BONUS	:= $(SRC_BONUS:.c=.o)
 
 all: $(NAME)
 
@@ -39,6 +46,14 @@ $(NAME): $(OBJ)
 test: $(NAME) test/main.c
 	$(CC) $(CFLAGS) test/main.c -L. -I$(INCDIR) -lgetnextline -o test/test_exec
 
+bonus: $(NAME)
+
+$(NAME): $(OBJ_BONUS)
+	$(AR) $(ARFLAGS) $(NAME) $(OBJ_BONUS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
+
 clean:
 	$(RM) $(OBJ)
 
@@ -50,4 +65,4 @@ run_test: test
 
 re: fclean all
 
-.PHONY: all clean fclean re test
+.PHONY: all clean fclean re test bonus
