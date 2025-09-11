@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
-/*   Updated: 2025/09/11 08:30:52 by xiribar          ###   ########.fr       */
+/*   Updated: 2025/09/11 09:31:41 by xiribar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	ft_clean_list(t_list **lst)
 {
@@ -26,11 +26,12 @@ void	ft_clean_list(t_list **lst)
 		return ;
 	last_node = ft_lstlast(*lst);
 	next_node = malloc(sizeof(t_list));
-	buffer = malloc(BUFFER_SIZE + 1);
+	buffer = malloc(BUFFER_SIZE);
 	if (!next_node || !buffer)
 		return ;
 	while (last_node->buffer[i] && last_node->buffer[i] != '\n')
 		i++;
+	i++;
 	while (last_node->buffer[i])
 		buffer[k++] = last_node->buffer[i++];
 	buffer[k] = '\0';
@@ -39,18 +40,18 @@ void	ft_clean_list(t_list **lst)
 	deallocate(lst, next_node, buffer);
 }
 
-char	*ft_get_line(t_list *lst)
+char	*ft_get_line(t_list **lst)
 {
 	int		len_to_newline;
 	char	*next_line;
 
-	len_to_newline = ft_list_len(lst);
-	if (lst == NULL)
+	len_to_newline = ft_list_len(*lst);
+	if (*lst == NULL)
 		return (NULL);
 	next_line = malloc(len_to_newline + 1);
 	if (!next_line)
 		return (NULL);
-	next_line = ft_feed_buffer(lst, next_line);
+	next_line = ft_feed_buffer(*lst, next_line, fd);
 	return (next_line);
 }
 
@@ -65,28 +66,33 @@ void	ft_create_list(t_list **list, int fd)
 		if (!bffr)
 			return ;
 		chars_read = read(fd, bffr, BUFFER_SIZE);
-		if (chars_read <= 0)
+		if (chars_read == -1)
 		{
-			free(bffr);
+			free(list[fd]);
 			return ;
 		}
+		else if (chars_read == 0)
+		{
+			free(buffer);
+			break ;
+		}
 		bffr[chars_read] = '\0';
-		append(list, bffr);
+		append(*list, bffr);
 	}
 }
 
 char	*get_next_line(int fd)
 {
-	static t_list	*list;
+	static t_list	*list[OPEN_MAX];
 	char	*next_line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= OPEN_MAX || BUFFER_SIZE <= 0)
 		return (NULL);
-	list = NULL;
-	ft_create_list(&list, fd);
-	if (list == NULL)
+	&list[fd] = NULL;
+	ft_create_list(&list[fd], fd);
+	if (list[fd] == NULL)
 		return (NULL);
-	next_line = ft_get_line(list);
-	ft_clean_list(&list);
+	next_line = ft_get_line(list[fd]);
+	ft_clean_list(&list[fd]);
 	return (next_line);
 }
