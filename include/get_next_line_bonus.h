@@ -23,7 +23,7 @@
 # endif
 
 # ifndef OPEN_MAX
-# define OPEN_MAX 10226
+# define OPEN_MAX 10240
 # endif
 
 typedef struct s_list

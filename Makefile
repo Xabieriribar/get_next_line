@@ -46,8 +46,7 @@ $(NAME): $(OBJ)
 test: $(NAME) test/main.c
 	$(CC) $(CFLAGS) test/main.c -L. -I$(INCDIR) -lgetnextline -o test/test_exec
 
-bonus: $(NAME)
-
+bonus:
 $(NAME): $(OBJ_BONUS)
 	$(AR) $(ARFLAGS) $(NAME) $(OBJ_BONUS)
 
@@ -55,7 +54,7 @@ $(NAME): $(OBJ_BONUS)
 	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
 
 clean:
-	$(RM) $(OBJ)
+	$(RM) $(OBJ) $(OBJ_BONUS)
 
 fclean: clean
 	$(RM) $(NAME)

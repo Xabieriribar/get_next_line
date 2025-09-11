@@ -6,7 +6,7 @@
 /*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
-/*   Updated: 2025/09/11 09:56:30 by xiribar          ###   ########.fr       */
+/*   Updated: 2025/09/11 10:13:02 by xiribar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	ft_clean_list(t_list **lst)
 		i++;
 	if (last_node->buffer[i] == '\n')
 		i++;
-	while (last_node->buffer[i] && i < BUFFER_SIZE)
+	while (last_node->buffer[i] && k < BUFFER_SIZE)
 		buffer[k++] = last_node->buffer[i++];
 	buffer[k] = '\0';
 	next_node->buffer = buffer;
@@ -46,13 +46,13 @@ char	*ft_get_line(t_list *lst)
 	int		len_to_newline;
 	char	*next_line;
 
-	len_to_newline = ft_list_len(*lst);
-	if (*lst == NULL)
+	len_to_newline = ft_list_len(lst);
+	if (lst == NULL)
 		return (NULL);
 	next_line = malloc(len_to_newline + 1);
 	if (!next_line)
 		return (NULL);
-	next_line = ft_feed_buffer(*lst, next_line);
+	next_line = ft_feed_buffer(lst, next_line);
 	return (next_line);
 }
 
@@ -69,7 +69,8 @@ void	ft_create_list(t_list **list, int fd)
 		chars_read = read(fd, bffr, BUFFER_SIZE);
 		if (chars_read == -1)
 		{
-			ft_lstclear(*lst, del);
+			free(bffr);
+			ft_lstclear(*list, del);
 			return ;
 		}
 		else if (chars_read == 0)
@@ -89,11 +90,10 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || fd >= OPEN_MAX || BUFFER_SIZE <= 0)
 		return (NULL);
-	*list[fd] = NULL;
 	ft_create_list(&list[fd], fd);
 	if (list[fd] == NULL)
 		return (NULL);
-	next_line = ft_get_line(&list[fd]);
-	ft_clean_list(list[fd]);
+	next_line = ft_get_line(list[fd]);
+	ft_clean_list(&list[fd]);
 	return (next_line);
 }
