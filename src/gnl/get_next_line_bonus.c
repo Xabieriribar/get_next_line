@@ -6,7 +6,7 @@
 /*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
-/*   Updated: 2025/09/11 10:13:02 by xiribar          ###   ########.fr       */
+/*   Updated: 2025/09/12 10:58:13 by xiribar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,23 @@ void	ft_clean_list(t_list **lst)
 		return ;
 	last_node = ft_lstlast(*lst);
 	next_node = malloc(sizeof(t_list));
-	buffer = malloc(BUFFER_SIZE);
-	if (!next_node || !buffer)
+	if (!next_node)
 		return ;
 	while (last_node->buffer[i] && last_node->buffer[i] != '\n')
 		i++;
 	if (last_node->buffer[i] == '\n')
 		i++;
-	while (last_node->buffer[i] && k < BUFFER_SIZE)
+	while (last_node->buffer[i++])
+		k++;
+	buffer = malloc(k + 1);
+	if (!buffer)
+	{
+		ft_lstclear(&next_node, del);
+		return ;
+	}
+	i -= k;
+	k = 0;
+	while (last_node->buffer[i])
 		buffer[k++] = last_node->buffer[i++];
 	buffer[k] = '\0';
 	next_node->buffer = buffer;
@@ -46,9 +55,9 @@ char	*ft_get_line(t_list *lst)
 	int		len_to_newline;
 	char	*next_line;
 
-	len_to_newline = ft_list_len(lst);
 	if (lst == NULL)
 		return (NULL);
+	len_to_newline = ft_list_len(lst);
 	next_line = malloc(len_to_newline + 1);
 	if (!next_line)
 		return (NULL);
@@ -70,7 +79,7 @@ void	ft_create_list(t_list **list, int fd)
 		if (chars_read == -1)
 		{
 			free(bffr);
-			ft_lstclear(*list, del);
+			ft_lstclear(list, del);
 			return ;
 		}
 		else if (chars_read == 0)
@@ -79,7 +88,7 @@ void	ft_create_list(t_list **list, int fd)
 			break ;
 		}
 		bffr[chars_read] = '\0';
-		append(*list, bffr);
+		append(list, bffr);
 	}
 }
 

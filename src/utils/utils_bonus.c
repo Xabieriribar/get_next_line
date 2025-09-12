@@ -6,7 +6,7 @@
 /*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
-/*   Updated: 2025/09/11 10:10:06 by xiribar          ###   ########.fr       */
+/*   Updated: 2025/09/12 09:57:00 by xiribar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ char	*ft_feed_buffer(t_list *lst, char *bffr_to_feed)
 
 void	deallocate(t_list **lst, t_list *next_node, char *buffer)
 {
-	ft_lstclear(*lst, del);
+	ft_lstclear(lst, del);
 	if (next_node -> buffer[0] != '\0')
 	{
 		*lst = next_node;

@@ -6,7 +6,7 @@
 /*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
-/*   Updated: 2025/09/11 08:39:11 by xiribar          ###   ########.fr       */
+/*   Updated: 2025/09/12 10:44:05 by xiribar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,17 +31,17 @@ int	found_newline(t_list *lst)
 	return (0);
 }
 
-void	append(t_list *list, char *bffr, int fd)
+void	append(t_list **list, char *bffr)
 {
 	t_list	*last_node;
 	t_list	*new_node;
 
-	last_node = ft_lstlast(list[fd]);
+	last_node = ft_lstlast(*list);
 	new_node = malloc(sizeof(t_list));
 	if (!new_node)
 		return ;
 	if (last_node == NULL)
-		list[fd] = new_node;
+		*list = new_node;
 	else
 		last_node -> next = new_node;
 	new_node -> buffer = bffr;
@@ -71,6 +71,7 @@ char	*ft_feed_buffer(t_list *lst, char *bffr_to_feed)
 		}
 		lst = lst->next;
 	}
+	bffr_to_feed[k] = '\0';
 	return (bffr_to_feed);
 }
 

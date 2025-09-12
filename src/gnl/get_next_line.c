@@ -6,7 +6,7 @@
 /*   By: xiribar <xabieriribarrevuelta@gmail.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 00:00:00 by xirib             #+#    #+#             */
-/*   Updated: 2025/09/11 08:30:52 by xiribar          ###   ########.fr       */
+/*   Updated: 2025/09/12 10:58:23 by xiribar          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,22 @@ void	ft_clean_list(t_list **lst)
 		return ;
 	last_node = ft_lstlast(*lst);
 	next_node = malloc(sizeof(t_list));
-	buffer = malloc(BUFFER_SIZE + 1);
-	if (!next_node || !buffer)
+	if (!next_node)
 		return ;
 	while (last_node->buffer[i] && last_node->buffer[i] != '\n')
 		i++;
+	if (last_node->buffer[i] == '\n')
+		i++;
+	while (last_node->buffer[i++])
+		k++;
+	buffer = malloc(k + 1);
+	if (!buffer)
+	{
+		ft_lstclear(&next_node, del);
+		return ;
+	}
+	i -= k;
+	k = 0;
 	while (last_node->buffer[i])
 		buffer[k++] = last_node->buffer[i++];
 	buffer[k] = '\0';
